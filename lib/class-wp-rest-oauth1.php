@@ -240,6 +240,17 @@ class WP_REST_OAuth1 {
 
 		switch ( $route ) {
 			case 'authorize':
+				$token_key = wp_unslash( $_REQUEST['oauth_token'] );
+				$scope = '*';
+				$authenticator = new WP_REST_OAuth1();
+				$token = $authenticator->get_request_token( $token_key );
+				$verifier = $authenticator->authorize_request_token( $token['key'], $_REQUEST['user_id'] );
+				$data = array(
+					'oauth_verifier' => $verifier,
+				);
+				
+				return $data;
+			
 				$url = site_url( 'wp-login.php?action=oauth1_authorize', 'login_post' );
 				$url .= '&' . $_SERVER['QUERY_STRING'];
 				wp_safe_redirect( $url );
